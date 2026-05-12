@@ -1,2 +1,15 @@
 # centro-de-estudiantes-api
-TP - Centro de estudiantes - json api
+
+Base Node.js API (Express) with Swagger UI, ready to deploy on Vercel.
+
+## Endpoints
+
+- `GET /hello`
+- Swagger explorer: `GET /api-docs`
+
+## Run locally
+
+```bash
+npm install
+npm start
+```

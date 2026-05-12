@@ -1,0 +1,27 @@
+{
+  "name": "centro-de-estudiantes-api",
+  "version": "1.0.0",
+  "description": "TP - Centro de estudiantes - json api",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/upsidedownmind/centro-de-estudiantes-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/upsidedownmind/centro-de-estudiantes-api/issues"
+  },
+  "homepage": "https://github.com/upsidedownmind/centro-de-estudiantes-api#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
