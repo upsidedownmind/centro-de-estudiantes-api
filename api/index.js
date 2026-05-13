@@ -1,8 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const swaggerJsdoc = require('swagger-jsdoc');
 const { name, version } = require('../package.json');
 
 const app = express();
+
+app.use(cors());
 
 const swaggerDefinition = {
   openapi: '3.0.0',
