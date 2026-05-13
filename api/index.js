@@ -12,6 +12,7 @@ const novedadesRouter = require('./routes/novedades');
 const perfilesRouter = require('./routes/perfiles');
 const reglamentacionRouter = require('./routes/reglamentacion');
 const usuariosRouter = require('./routes/usuarios');
+const basicAuth = require('./middleware/basicAuth');
 
 const app = express();
 
@@ -98,14 +99,14 @@ app.get('/hello', (req, res) => {
   res.json({ message: 'Hello from centro-de-estudiantes-api!' });
 });
 
-app.use('/calendario', calendarioRouter);
-app.use('/carreras', carrerasRouter);
-app.use('/eventos', eventosRouter);
-app.use('/notificaciones', notificacionesRouter);
-app.use('/novedades', novedadesRouter);
-app.use('/perfiles', perfilesRouter);
-app.use('/reglamentacion', reglamentacionRouter);
-app.use('/usuarios', usuariosRouter);
+app.use('/calendario', basicAuth, calendarioRouter);
+app.use('/carreras', basicAuth, carrerasRouter);
+app.use('/eventos', basicAuth, eventosRouter);
+app.use('/notificaciones', basicAuth, notificacionesRouter);
+app.use('/novedades', basicAuth, novedadesRouter);
+app.use('/perfiles', basicAuth, perfilesRouter);
+app.use('/reglamentacion', basicAuth, reglamentacionRouter);
+app.use('/usuarios', basicAuth, usuariosRouter);
 
 module.exports = app;
 
