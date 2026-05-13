@@ -1,6 +1,7 @@
 const express = require('express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const { name, version } = require('../package.json');
 
 const app = express();
 
@@ -17,6 +18,32 @@ const swaggerDefinition = {
 const specs = swaggerJsdoc({
   definition: swaggerDefinition,
   apis: [__filename]
+});
+
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     summary: API info
+ *     tags:
+ *       - Info
+ *     responses:
+ *       200:
+ *         description: Returns the package name and version
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   example: centro-de-estudiantes-api
+ *                 version:
+ *                   type: string
+ *                   example: 1.0.0
+ */
+app.get('/', (req, res) => {
+  res.json({ name, version });
 });
 
 /**
