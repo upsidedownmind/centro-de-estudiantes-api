@@ -1,11 +1,17 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const swaggerJsdoc = require('swagger-jsdoc');
 const { name, version } = require('../package.json');
 
 const app = express();
 
 app.use(cors());
+
+// Serve robots.txt from project root
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'robots.txt'));
+});
 
 const swaggerDefinition = {
   openapi: '3.0.0',
@@ -27,29 +33,10 @@ app.get('/api-docs/swagger.json', (req, res) => {
   res.json(specs);
 });
 
+// Allow AI agents, block search engine indexing
 // Serve Swagger UI via CDN (avoids static file issues in serverless environments)
 app.get('/api-docs', (req, res) => {
-  res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Centro de Estudiantes API Docs</title>
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css">
-</head>
-<body>
-  <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
-  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
-  <script>
-    SwaggerUIBundle({
-      url: '/api-docs/swagger.json',
-      dom_id: '#swagger-ui',
-      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-      layout: 'StandaloneLayout'
-    });
-  </script>
-</body>
-</html>`);
+  res.sendFile(path.join(__dirname, '..', 'api-docs.html'));
 });
 
 /**
