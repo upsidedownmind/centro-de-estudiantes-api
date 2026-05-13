@@ -1,13 +1,36 @@
 
-const mockStore = {};
+const { put, list, del } = require('@vercel/blob');
+
+const BLOB_PREFIX = 'db';
+
 module.exports = {
 
     async _fetchFile(user, entity) {
-        return mockStore[`${user}_${entity}`] || [];
+        try {
+            const { blobs } = await list({ prefix: `${BLOB_PREFIX}/${user}/${entity}.json` });
+            if (!blobs.length) return [];
+            const res = await fetch(blobs[0].url);
+            return res.json();
+        } catch (e) {
+            console.error(`Error al leer '${entity}':`, e);
+            const err = new Error(`Error de base de datos al leer '${entity}': ${e.message}`);
+            err.code = 'DB_ERROR';
+            throw err;
+        }
     },
 
     async _updateFile(user, entity, data) {
-        mockStore[`${user}_${entity}`] = data;
+        try {
+            await put(`${BLOB_PREFIX}/${user}/${entity}.json`, JSON.stringify(data), {
+                access: 'private',
+                allowOverwrite: true,
+            });
+        } catch (e) {
+            console.error(`Error al escribir '${entity}':`, e);
+            const err = new Error(`Error de base de datos al escribir '${entity}': ${e.message}`);
+            err.code = 'DB_ERROR';
+            throw err;
+        }
     },
 
     async find(user, entity, id) {

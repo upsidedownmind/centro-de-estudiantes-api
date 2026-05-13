@@ -37,8 +37,13 @@ const ENTITY = 'novedades';
  *                 icono: ""
  */
 router.get('/', async (req, res) => {
-  const result = await db.find(req.user, ENTITY);
-  res.json(result);
+  try {
+    const result = await db.find(req.user, ENTITY);
+    res.json(result);
+  } catch (err) {
+    if (err.code === 'DB_ERROR') return res.status(500).json({ error: err.message });
+    throw err;
+  }
 });
 
 /**
@@ -81,6 +86,7 @@ router.post('/', validateBody, async (req, res) => {
     res.status(201).json(item);
   } catch (err) {
     if (err.code === 'LIMIT_EXCEEDED') return res.status(403).json({ error: err.message });
+    if (err.code === 'DB_ERROR') return res.status(500).json({ error: err.message });
     throw err;
   }
 });
@@ -110,10 +116,15 @@ router.post('/', validateBody, async (req, res) => {
  *         description: Novedad no encontrada
  */
 router.get('/:id', async (req, res) => {
-  let item = await db.find(req.user, ENTITY, req.params.id);
-  item = item[0];
-  if (!item) return res.status(404).json({ error: 'No encontrado' });
-  res.json(item);
+  try {
+    let item = await db.find(req.user, ENTITY, req.params.id);
+    item = item[0];
+    if (!item) return res.status(404).json({ error: 'No encontrado' });
+    res.json(item);
+  } catch (err) {
+    if (err.code === 'DB_ERROR') return res.status(500).json({ error: err.message });
+    throw err;
+  }
 });
 
 /**
@@ -160,9 +171,14 @@ router.get('/:id', async (req, res) => {
  *         description: Novedad no encontrada
  */
 router.put('/:id', validateBody, async (req, res) => {
-  const item = await db.update(req.user, ENTITY, req.params.id, req.body);
-  if (!item) return res.status(404).json({ error: 'No encontrado' });
-  res.json(item);
+  try {
+    const item = await db.update(req.user, ENTITY, req.params.id, req.body);
+    if (!item) return res.status(404).json({ error: 'No encontrado' });
+    res.json(item);
+  } catch (err) {
+    if (err.code === 'DB_ERROR') return res.status(500).json({ error: err.message });
+    throw err;
+  }
 });
 
 /**
@@ -186,9 +202,14 @@ router.put('/:id', validateBody, async (req, res) => {
  *         description: Novedad no encontrada
  */
 router.delete('/:id', async (req, res) => {
-  const item = await db.delete(req.user, ENTITY, req.params.id);
-  if (!item) return res.status(404).json({ error: 'No encontrado' });
-  res.json(item);
+  try {
+    const item = await db.delete(req.user, ENTITY, req.params.id);
+    if (!item) return res.status(404).json({ error: 'No encontrado' });
+    res.json(item);
+  } catch (err) {
+    if (err.code === 'DB_ERROR') return res.status(500).json({ error: err.message });
+    throw err;
+  }
 });
 
 module.exports = router;
