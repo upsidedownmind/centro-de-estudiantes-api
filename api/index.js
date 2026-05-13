@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -31,7 +32,16 @@ const swaggerDefinition = {
     version: '1.0.0',
     description: 'Base Node.js API with Express and Swagger'
   },
-  servers: [{ url: '/' }]
+  servers: [{ url: '/' }],
+  components: {
+    securitySchemes: {
+      basicAuth: {
+        type: 'http',
+        scheme: 'basic'
+      }
+    }
+  },
+  security: [{ basicAuth: [] }]
 };
 
 const specs = swaggerJsdoc({
@@ -74,29 +84,6 @@ app.get('/api-docs', (req, res) => {
  */
 app.get('/', (req, res) => {
   res.json({ name, version });
-});
-
-/**
- * @openapi
- * /hello:
- *   get:
- *     summary: Hello endpoint
- *     tags:
- *       - Hello
- *     responses:
- *       200:
- *         description: Returns a hello message
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Hello from centro-de-estudiantes-api!
- */
-app.get('/hello', (req, res) => {
-  res.json({ message: 'Hello from centro-de-estudiantes-api!' });
 });
 
 app.use('/calendario', basicAuth, calendarioRouter);
