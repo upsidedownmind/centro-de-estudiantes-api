@@ -51,6 +51,7 @@ const specs = swaggerJsdoc({
 
 // Serve OpenAPI spec as JSON
 app.get('/api-docs/swagger.json', (req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.json(specs);
 });
 
