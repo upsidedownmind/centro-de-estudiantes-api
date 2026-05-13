@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../dbs/mockdb');
+const validateBody = require('../middleware/validateBody');
 
-let data = [
-  { id: 1, tipo: 'resolucion', titulo: 'Resolución 2022-43193672 - Diseño Curricular Profesorado en Biología', descripcion: 'Resolución que establece el diseño curricular del Profesorado de Educación Secundaria en Biología.', archivo: 'Resolucion-2022-43193672.pdf', link: '', categoria: 'academica', palabras_clave: ['profesorado', 'biología', 'diseño curricular'], fecha_publicacion: '2022-06-15', version: '1.0' },
-  { id: 2, tipo: 'reglamento', titulo: 'Reglamento Académico Institucional', descripcion: 'Reglamento que establece las normas académicas del instituto.', archivo: 'RAI.pdf', link: '', categoria: 'academica', palabras_clave: ['reglamento', 'académico', 'normas'], fecha_publicacion: '2023-03-01', version: '2.0' }
-];
-let nextId = 3;
+const ENTITY = 'reglamentacion';
 
 /**
  * @openapi
@@ -35,8 +33,9 @@ let nextId = 3;
  *                 fecha_publicacion: "2022-06-15"
  *                 version: "1.0"
  */
-router.get('/', (req, res) => {
-  res.json(data);
+router.get('/', async (req, res) => {
+  const result = await db.find(req.user, ENTITY);
+  res.json(result);
 });
 
 /**
@@ -70,10 +69,45 @@ router.get('/', (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Reglamentacion'
  */
-router.post('/', (req, res) => {
-  const item = { id: nextId++, ...req.body };
-  data.push(item);
-  res.status(201).json(item);
+router.post('/', validateBody, async (req, res) => {
+  try {
+    const item = await db.create(req.user, ENTITY, req.body);
+    res.status(201).json(item);
+  } catch (err) {
+    if (err.code === 'LIMIT_EXCEEDED') return res.status(403).json({ error: err.message });
+    throw err;
+  }
+});
+
+/**
+ * @openapi
+ * /reglamentacion/{id}:
+ *   get:
+ *     summary: Obtener documento de reglamentación por ID
+ *     tags:
+ *       - Reglamentación
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Documento encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Reglamentacion'
+ *       404:
+ *         description: Documento no encontrado
+ */
+router.get('/:id', async (req, res) => {
+  let item = await db.find(req.user, ENTITY, req.params.id);
+  item = item[0];
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 /**
@@ -116,11 +150,10 @@ router.post('/', (req, res) => {
  *       404:
  *         description: Documento no encontrado
  */
-router.put('/:id', (req, res) => {
-  const idx = data.findIndex(i => i.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  data[idx] = { ...data[idx], ...req.body, id: data[idx].id };
-  res.json(data[idx]);
+router.put('/:id', validateBody, async (req, res) => {
+  const item = await db.update(req.user, ENTITY, req.params.id, req.body);
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 /**
@@ -143,11 +176,10 @@ router.put('/:id', (req, res) => {
  *       404:
  *         description: Documento no encontrado
  */
-router.delete('/:id', (req, res) => {
-  const idx = data.findIndex(i => i.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  const removed = data.splice(idx, 1);
-  res.json(removed[0]);
+router.delete('/:id', async (req, res) => {
+  const item = await db.delete(req.user, ENTITY, req.params.id);
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 module.exports = router;

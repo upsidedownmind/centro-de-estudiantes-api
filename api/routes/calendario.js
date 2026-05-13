@@ -1,13 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../dbs/mockdb');
+const validateBody = require('../middleware/validateBody');
 
-let data = [
-  { id: 1, fecha: '2026-01-01', titulo: 'Feriado: Año Nuevo', tipo: 'feriado', color: '#E67E5B' },
-  { id: 2, fecha: '2026-02-16', titulo: 'Feriado: Carnaval', tipo: 'feriado', color: '#E67E5B' },
-  { id: 3, fecha: '2026-03-02', titulo: 'Inscripción a materias', tipo: 'inscripcion', color: '#3DAA6A' },
-  { id: 4, fecha: '2026-03-16', titulo: 'Inicio de clases', tipo: 'academico', color: '#F5A623' }
-];
-let nextId = 5;
+const ENTITY = 'calendario';
 
 /**
  * @openapi
@@ -37,8 +33,9 @@ let nextId = 5;
  *                 tipo: "feriado"
  *                 color: "#E67E5B"
  */
-router.get('/', (req, res) => {
-  res.json(data);
+router.get('/', async (req, res) => {
+  const result = await db.find(req.user, ENTITY);
+  res.json(result);
 });
 
 /**
@@ -67,10 +64,45 @@ router.get('/', (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Calendario'
  */
-router.post('/', (req, res) => {
-  const item = { id: nextId++, ...req.body };
-  data.push(item);
-  res.status(201).json(item);
+router.post('/', validateBody, async (req, res) => {
+  try {
+    const item = await db.create(req.user, ENTITY, req.body);
+    res.status(201).json(item);
+  } catch (err) {
+    if (err.code === 'LIMIT_EXCEEDED') return res.status(403).json({ error: err.message });
+    throw err;
+  }
+});
+
+/**
+ * @openapi
+ * /calendario/{id}:
+ *   get:
+ *     summary: Obtener evento de calendario por ID
+ *     tags:
+ *       - Calendario
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Evento encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Calendario'
+ *       404:
+ *         description: Evento no encontrado
+ */
+router.get('/:id', async (req, res) => {
+  let item = await db.find(req.user, ENTITY, req.params.id);
+  item = item[0];
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 /**
@@ -108,11 +140,10 @@ router.post('/', (req, res) => {
  *       404:
  *         description: Evento no encontrado
  */
-router.put('/:id', (req, res) => {
-  const idx = data.findIndex(i => i.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  data[idx] = { ...data[idx], ...req.body, id: data[idx].id };
-  res.json(data[idx]);
+router.put('/:id', validateBody, async (req, res) => {
+  const item = await db.update(req.user, ENTITY, req.params.id, req.body);
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 /**
@@ -135,11 +166,10 @@ router.put('/:id', (req, res) => {
  *       404:
  *         description: Evento no encontrado
  */
-router.delete('/:id', (req, res) => {
-  const idx = data.findIndex(i => i.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  const removed = data.splice(idx, 1);
-  res.json(removed[0]);
+router.delete('/:id', async (req, res) => {
+  const item = await db.delete(req.user, ENTITY, req.params.id);
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 module.exports = router;

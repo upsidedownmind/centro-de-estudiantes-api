@@ -22,7 +22,7 @@ function basicAuth(req, res, next) {
     return res.status(401).json({ error: 'Credenciales inválidas' });
   }
 
-  req.user = { username };
+  req.user = username;
   next();
 }
 

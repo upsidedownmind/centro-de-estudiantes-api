@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../dbs/mockdb');
+const validateBody = require('../middleware/validateBody');
 
-let data = [
-  { id: 1, titulo: 'Workshop de Python para Data Science', descripcion: 'Taller intensivo de 3 jornadas sobre las librerías esenciales del ecosistema Python para Ciencia de Datos.', fecha_inicio: '2026-05-05T18:00:00', fecha_fin: '2026-05-07T21:00:00', cupo: 40, inscriptos: 38, autor_id: 2, autor: 'Secretaría Académica', estado: 'abierto', categoria: 'taller', lugar: 'Laboratorio 3', color: '#3A5BA9', imagen: '' },
-  { id: 2, titulo: 'Torneo Intercarreras de Fútbol', descripcion: 'Torneo de fútbol 5 entre las distintas carreras del instituto.', fecha_inicio: '2026-05-10T10:00:00', fecha_fin: '2026-05-10T18:00:00', cupo: 80, inscriptos: 64, autor_id: 3, autor: 'Centro de Estudiantes', estado: 'abierto', categoria: 'deportivo', lugar: 'Cancha sintética', color: '#E67E5B', imagen: '' }
-];
-let nextId = 3;
+const ENTITY = 'eventos';
 
 /**
  * @openapi
@@ -39,8 +37,9 @@ let nextId = 3;
  *                 color: "#3A5BA9"
  *                 imagen: ""
  */
-router.get('/', (req, res) => {
-  res.json(data);
+router.get('/', async (req, res) => {
+  const result = await db.find(req.user, ENTITY);
+  res.json(result);
 });
 
 /**
@@ -78,10 +77,45 @@ router.get('/', (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Evento'
  */
-router.post('/', (req, res) => {
-  const item = { id: nextId++, ...req.body };
-  data.push(item);
-  res.status(201).json(item);
+router.post('/', validateBody, async (req, res) => {
+  try {
+    const item = await db.create(req.user, ENTITY, req.body);
+    res.status(201).json(item);
+  } catch (err) {
+    if (err.code === 'LIMIT_EXCEEDED') return res.status(403).json({ error: err.message });
+    throw err;
+  }
+});
+
+/**
+ * @openapi
+ * /eventos/{id}:
+ *   get:
+ *     summary: Obtener evento por ID
+ *     tags:
+ *       - Eventos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Evento encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Evento'
+ *       404:
+ *         description: Evento no encontrado
+ */
+router.get('/:id', async (req, res) => {
+  let item = await db.find(req.user, ENTITY, req.params.id);
+  item = item[0];
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 /**
@@ -128,11 +162,10 @@ router.post('/', (req, res) => {
  *       404:
  *         description: Evento no encontrado
  */
-router.put('/:id', (req, res) => {
-  const idx = data.findIndex(i => i.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  data[idx] = { ...data[idx], ...req.body, id: data[idx].id };
-  res.json(data[idx]);
+router.put('/:id', validateBody, async (req, res) => {
+  const item = await db.update(req.user, ENTITY, req.params.id, req.body);
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 /**
@@ -155,11 +188,10 @@ router.put('/:id', (req, res) => {
  *       404:
  *         description: Evento no encontrado
  */
-router.delete('/:id', (req, res) => {
-  const idx = data.findIndex(i => i.id === parseInt(req.params.id));
-  if (idx === -1) return res.status(404).json({ error: 'No encontrado' });
-  const removed = data.splice(idx, 1);
-  res.json(removed[0]);
+router.delete('/:id', async (req, res) => {
+  const item = await db.delete(req.user, ENTITY, req.params.id);
+  if (!item) return res.status(404).json({ error: 'No encontrado' });
+  res.json(item);
 });
 
 module.exports = router;
