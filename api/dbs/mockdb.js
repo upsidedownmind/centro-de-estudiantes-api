@@ -48,6 +48,11 @@ module.exports = {
             throw err;
         }
         const newItem = { ...data, id };
+        if (Buffer.byteLength(JSON.stringify(newItem), 'utf8') > 80 * 1024) {
+            const err = new Error(`El item excede el tamaño máximo permitido de 80KB para '${entity}'`);
+            err.code = 'PAYLOAD_TOO_LARGE';
+            throw err;
+        }
         const records = await this._fetchFile(user, entity);
         records.push(newItem);
         await this._updateFile(user, entity, records);
@@ -59,6 +64,11 @@ module.exports = {
         const index = records.findIndex(item => item.id === id);
         if (index === -1) return null;
         records[index] = { ...records[index], ...data };
+        if (Buffer.byteLength(JSON.stringify(records[index]), 'utf8') > 80 * 1024) {
+            const err = new Error(`El item excede el tamaño máximo permitido de 80KB para '${entity}'`);
+            err.code = 'PAYLOAD_TOO_LARGE';
+            throw err;
+        }
         await this._updateFile(user, entity, records);
         return records[index];
     },

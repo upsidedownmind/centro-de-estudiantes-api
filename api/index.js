@@ -96,6 +96,12 @@ app.use('/perfiles', basicAuth, perfilesRouter);
 app.use('/reglamentacion', basicAuth, reglamentacionRouter);
 app.use('/usuarios', basicAuth, usuariosRouter);
 
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  if (err.code === 'PAYLOAD_TOO_LARGE') return res.status(413).json({ error: err.message });
+  next(err);
+});
+
 module.exports = app;
 
 if (require.main === module) {
