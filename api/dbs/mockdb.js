@@ -12,7 +12,7 @@ module.exports = {
             const res = await fetch(blobs[0].url);
             return res.json();
         } catch (e) {
-            console.error(`Error al leer '${entity}':`, e);
+            console.error(`Error al leer '${entity}':`, process.env.BLOB_READ_WRITE_TOKEN, e);
             const err = new Error(`Error de base de datos al leer '${entity}': ${e.message}`);
             err.code = 'DB_ERROR';
             throw err;
