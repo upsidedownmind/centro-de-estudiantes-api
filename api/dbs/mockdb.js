@@ -22,7 +22,7 @@ module.exports = {
     async _updateFile(user, entity, data) {
         try {
             await put(`${BLOB_PREFIX}/${user}/${entity}.json`, JSON.stringify(data), {
-                access: 'private',
+                access: 'public',
                 allowOverwrite: true,
             });
         } catch (e) {
