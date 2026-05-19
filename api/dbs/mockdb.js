@@ -7,8 +7,9 @@ module.exports = {
 
     async _fetchFile(user, entity) {
         try {
-            console.log('_fetchFile', user, entity);
-            const { blobs } = await list({ pathname: `${BLOB_PREFIX}/${user}/${entity}.json` });
+            const pathname = `${BLOB_PREFIX}/${user}/${entity}.json`;
+            console.log('_fetchFile', user, entity, pathname);
+            const { blobs } = await list({ pathname });
             console.log('_fetchFile', blobs);
             const blob = blobs.find(b => b.pathname === pathname);
             if (!blob) return [];
