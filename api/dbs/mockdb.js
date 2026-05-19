@@ -7,7 +7,9 @@ module.exports = {
 
     async _fetchFile(user, entity) {
         try {
+            console.log('_fetchFile', user, entity);
             const { blobs } = await list({ prefix: `${BLOB_PREFIX}/${user}/${entity}.json` });
+            console.log('_fetchFile', blobs);
             if (!blobs.length) return [];
             const res = await fetch(blobs[0].url);
             return res.json();
@@ -21,10 +23,12 @@ module.exports = {
 
     async _updateFile(user, entity, data) {
         try {
-            await put(`${BLOB_PREFIX}/${user}/${entity}.json`, JSON.stringify(data), {
+            console.log('_updateFile', user, entity);
+            const ok = await put(`${BLOB_PREFIX}/${user}/${entity}.json`, JSON.stringify(data), {
                 access: 'public',
                 allowOverwrite: true,
             });
+            console.log('_updateFile', ok);
         } catch (e) {
             console.error(`Error al escribir '${entity}':`, e);
             const err = new Error(`Error de base de datos al escribir '${entity}': ${e.message}`);
