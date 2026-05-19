@@ -10,8 +10,9 @@ module.exports = {
             console.log('_fetchFile', user, entity);
             const { blobs } = await list({ pathname: `${BLOB_PREFIX}/${user}/${entity}.json` });
             console.log('_fetchFile', blobs);
-            if (!blobs.length) return [];
-            const res = await fetch(blobs[0].url);
+            const blob = blobs.find(b => b.pathname === pathname);
+            if (!blob) return [];
+            const res = await fetch(blob.url);
             return res.json();
         } catch (e) {
             console.error(`Error al leer '${entity}': BLOB_READ_WRITE_TOKEN`, process.env.BLOB_READ_WRITE_TOKEN, e);
