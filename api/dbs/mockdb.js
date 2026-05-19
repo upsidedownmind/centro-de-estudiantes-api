@@ -8,7 +8,7 @@ module.exports = {
     async _fetchFile(user, entity) {
         try {
             console.log('_fetchFile', user, entity);
-            const { blobs } = await list({ prefix: `${BLOB_PREFIX}/${user}/${entity}.json` });
+            const { blobs } = await list({ pathname: `${BLOB_PREFIX}/${user}/${entity}.json` });
             console.log('_fetchFile', blobs);
             if (!blobs.length) return [];
             const res = await fetch(blobs[0].url);
