@@ -67,7 +67,7 @@ module.exports = {
 
     async update(user, entity, id, data) {
         const records = await this._fetchFile(user, entity);
-        const index = records.findIndex(item => item.id === id);
+        const index = records.findIndex(item => item.id == id);
         if (index === -1) return null;
         records[index] = { ...records[index], ...data };
         if (Buffer.byteLength(JSON.stringify(records[index]), 'utf8') > 80 * 1024) {
