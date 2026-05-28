@@ -2,7 +2,7 @@ const schemas = {
   Calendario: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       fecha: { type: 'string', example: '2026-01-01' },
       titulo: { type: 'string', example: 'Feriado: Año Nuevo' },
       tipo: { type: 'string', example: 'feriado' },
@@ -23,7 +23,7 @@ const schemas = {
   Carrera: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       codigo: { type: 'string', example: 'TSP' },
       nombre: { type: 'string', example: 'Tecnicatura Superior en Programación' }
     }
@@ -40,7 +40,7 @@ const schemas = {
   Evento: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       titulo: { type: 'string', example: 'Workshop de Python para Data Science' },
       descripcion: { type: 'string', example: 'Taller intensivo de 3 jornadas' },
       fecha_inicio: { type: 'string', example: '2026-05-05T18:00:00' },
@@ -79,7 +79,7 @@ const schemas = {
   Notificacion: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       titulo: { type: 'string', example: 'Nueva mesa de examen disponible' },
       mensaje: { type: 'string', example: 'Se habilitó la inscripción a mesas de julio.' },
       usuario_id: { type: 'integer', example: 1 },
@@ -102,7 +102,7 @@ const schemas = {
   Novedad: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       titulo: { type: 'string', example: 'Apertura de inscripciones a mesas de exámenes de Julio' },
       contenido: { type: 'string', example: 'Ya se encuentra disponible el sistema de inscripción...' },
       categoria_id: { type: 'integer', example: 1 },
@@ -139,7 +139,7 @@ const schemas = {
   Perfil: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       nombre: { type: 'string', example: 'estudiante' },
       descripcion: { type: 'string', example: 'Alumno regular del instituto' }
     }
@@ -156,7 +156,7 @@ const schemas = {
   Reglamentacion: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       tipo: { type: 'string', example: 'resolucion' },
       titulo: { type: 'string', example: 'Resolución 2022-43193672' },
       descripcion: { type: 'string', example: 'Resolución que establece el diseño curricular...' },
@@ -187,7 +187,7 @@ const schemas = {
   Usuario: {
     type: 'object',
     properties: {
-      id: { type: 'integer', example: 1 },
+      id: { type: 'string', example: '1' },
       dni: { type: 'string', example: '40123456' },
       nombre: { type: 'string', example: 'Santiago Chiale' },
       usuario: { type: 'string', example: 'santiago' },
