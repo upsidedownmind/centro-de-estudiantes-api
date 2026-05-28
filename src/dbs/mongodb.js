@@ -24,6 +24,7 @@ function toPublic(doc) {
 module.exports = {
 
     async find(user, entity, id) {
+        console.log('find', user, entity, id);
         const database = await getDb();
         const col = database.collection(entity);
         if (id) {
@@ -58,6 +59,7 @@ module.exports = {
     },
 
     async update(user, entity, id, data) {
+        console.log('update', user, entity, id);
         const database = await getDb();
         const col = database.collection(entity);
 
@@ -66,7 +68,8 @@ module.exports = {
 
         const { _id, ...existingData } = existing;
         const updated = { ...existingData, ...data, owner: user };
-
+        delete updated._id;
+        delete updated.id;
         if (Buffer.byteLength(JSON.stringify(updated), 'utf8') > 80 * 1024) {
             const err = new Error(`El item excede el tamaño máximo permitido de 80KB para '${entity}'`);
             err.code = 'PAYLOAD_TOO_LARGE';

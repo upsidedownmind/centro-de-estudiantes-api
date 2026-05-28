@@ -86,8 +86,8 @@ router.post('/', validateBody, async (req, res) => {
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
- *         example: 1
+ *           type: string
+ *         example: "1"
  *     responses:
  *       200:
  *         description: Perfil encontrado
@@ -122,8 +122,8 @@ router.get('/:id', async (req, res) => {
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
- *         example: 1
+ *           type: string
+ *         example: "1"
  *     requestBody:
  *       required: true
  *       content:
@@ -166,8 +166,8 @@ router.put('/:id', validateBody, async (req, res) => {
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
- *         example: 1
+ *           type: string
+ *         example: "1"
  *     responses:
  *       200:
  *         description: Perfil eliminado
