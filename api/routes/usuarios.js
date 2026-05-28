@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../dbs/mockdb');
+const db = require('../dbs/db');
 const validateBody = require('../middleware/validateBody');
 
 const ENTITY = 'usuarios';

@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const swaggerJsdoc = require('swagger-jsdoc');
 const { name, version } = require('../package.json');
+const schemas = require('./routes/schemas');
 
 const calendarioRouter = require('./routes/calendario');
 const carrerasRouter = require('./routes/carreras');
@@ -39,7 +40,8 @@ const swaggerDefinition = {
         type: 'http',
         scheme: 'basic'
       }
-    }
+    },
+    schemas
   },
   security: [{ basicAuth: [] }]
 };
