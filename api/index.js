@@ -4,17 +4,17 @@ const cors = require('cors');
 const path = require('path');
 const swaggerJsdoc = require('swagger-jsdoc');
 const { name, version } = require('../package.json');
-const schemas = require('./routes/schemas');
+const schemas = require('../src/routes/schemas');
 
-const calendarioRouter = require('./routes/calendario');
-const carrerasRouter = require('./routes/carreras');
-const eventosRouter = require('./routes/eventos');
-const notificacionesRouter = require('./routes/notificaciones');
-const novedadesRouter = require('./routes/novedades');
-const perfilesRouter = require('./routes/perfiles');
-const reglamentacionRouter = require('./routes/reglamentacion');
-const usuariosRouter = require('./routes/usuarios');
-const basicAuth = require('./middleware/basicAuth');
+const calendarioRouter = require('../src/routes/calendario');
+const carrerasRouter = require('../src/routes/carreras');
+const eventosRouter = require('../src/routes/eventos');
+const notificacionesRouter = require('../src/routes/notificaciones');
+const novedadesRouter = require('../src/routes/novedades');
+const perfilesRouter = require('../src/routes/perfiles');
+const reglamentacionRouter = require('../src/routes/reglamentacion');
+const usuariosRouter = require('../src/routes/usuarios');
+const basicAuth = require('../src/middleware/basicAuth');
 
 const app = express();
 
@@ -48,7 +48,7 @@ const swaggerDefinition = {
 
 const specs = swaggerJsdoc({
   definition: swaggerDefinition,
-  apis: [__filename, path.join(__dirname, 'routes', '*.js')]
+  apis: [__filename, path.join(__dirname, '..', 'src', 'routes', '*.js')]
 });
 
 // Serve OpenAPI spec as JSON

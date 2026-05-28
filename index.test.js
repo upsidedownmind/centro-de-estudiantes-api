@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const app = require('./index');
+const app = require('./api/index');
 
 test('GET / returns package name and version', async () => {
   const server = app.listen(0);
